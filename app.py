@@ -15,12 +15,17 @@ from urllib.parse import urlparse
 import mlflow
 from mlflow.models import infer_signature
 import mlflow.sklearn
-
+from dotenv import load_dotenv
 import logging
 
 logging.basicConfig(level=logging.WARN)
 logger = logging.getLogger(__name__)
 
+load_dotenv()
+
+
+MLFLOW_TRACKING_URI = os.getenv('MLFLOW_TRACKING_URI')
+MLFLOW_TRACKING_USERNAME = os.getenv('MLFLOW_TRACKING_USERNAME')
 
 def eval_metrics(actual, pred):
     rmse = np.sqrt(mean_squared_error(actual, pred))
@@ -78,6 +83,8 @@ if __name__ == "__main__":
         predictions = lr.predict(train_x)
         signature = infer_signature(train_x, predictions)
 
+        remore_server_uri = 'https://dagshub.com/mohammedshaneeb-ai/MLflow.mlflow'
+        mlflow.set_tracking_uri(remore_server_uri)
         tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
 
         # Model registry does not work with file store
